@@ -1,2 +1,41 @@
-# Project exclude paths
-/target/
+# Maven编译打包产物，绝对不上传
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEA专属配置文件
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# SpringBoot本地配置文件（核心敏感文件）
+application-dev.yml
+application-dev.properties
+application-local.yml
+application-local.properties
+bootstrap-dev.yml
+bootstrap-local.properties
+
+# 日志文件
+logs/
+*.log
+spring.log
+
+# 证书、密钥文件
+*.jks
+*.pfx
+*.p12
+*.pem
+
+# 数据库备份文件
+*.sql
+dump.sql
+
+# 系统缓存文件
+.DS_Store
+Thumbs.db
+
+# 本地环境临时文件
+.temp
+*.tmp
