@@ -1,6 +1,7 @@
 # Tlias智能学习辅助系统（后端）
 ## 项目简介
-SpringBoot后端项目，实现员工、部门、班级管理，集成阿里云OSS文件上传功能。
+SpringBoot后端项目，实现员工、部门、班级管理，集成阿里云OSS文件上传功能，有Filter 过滤器和Interceptor 拦截器。
+
 
 ## 技术栈
 - SpringBoot
