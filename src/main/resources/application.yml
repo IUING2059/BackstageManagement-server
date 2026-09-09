@@ -32,4 +32,4 @@ aliyun:
   oss:
     endpoint: 阿里云oss地址
     bucketName:
-    region: 
+    region:
