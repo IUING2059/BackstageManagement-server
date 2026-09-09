@@ -1,0 +1,35 @@
+#数据库连接
+spring:
+  application:
+    name: backstageManagement-web-management
+  datasource:
+    url: jdbc:mysql://localhost:3306/backstageManagement
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: psw
+  servlet:
+    multipart:
+      #最大单个文件上传大小
+      max-file-size: 10MB
+      #最大请求大小（包括所有文件和表单数据）
+      max-request-size: 100MB
+
+#mybatis配置
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启驼峰映射
+    map-underscore-to-camel-case: true
+
+#配置事务管理日志级别
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug、
+
+
+#阿里云OSS配置
+aliyun:
+  oss:
+    endpoint: 阿里云oss地址
+    bucketName:
+    region: 

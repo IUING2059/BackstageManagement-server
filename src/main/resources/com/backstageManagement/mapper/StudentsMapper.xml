@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.backstageManagement.mapper.StudentsMapper">
+
+    <!--    插入学员数据-->
+    <insert id="insert">
+        insert into student
+        <trim prefix="set" suffixOverrides=",">
+            name=#{name},
+            no=#{no},
+            gender=#{gender},
+            phone=#{phone},
+            degree=#{degree},
+            clazz_id=#{clazzId},
+            create_time=#{createTime},
+            update_time=#{updateTime},
+            <if test="idCard != null and idCard != ''">
+                id_card=#{idCard},
+            </if>
+            <if test="isCollege != null">
+                is_college=#{isCollege},
+            </if>
+            <if test="address != null and address != ''">
+                address=#{address},
+            </if>
+            <if test="graduationDate != null">
+                graduation_date=#{graduationDate}
+            </if>
+        </trim>
+    </insert>
+    <!--    修改学员数据-->
+    <update id="update">
+        update student
+        <trim prefix="set" suffixOverrides=",">
+            name=#{name},
+            no=#{no},
+            gender=#{gender},
+            phone=#{phone},
+            degree=#{degree},
+            violation_count=#{violationCount},
+            violation_score=#{violationScore},
+            clazz_id=#{clazzId},
+            <if test="idCard!=null">id_card=#{idCard},</if>
+            <if test="isCollege!=null and isCollege!=''">is_college=#{isCollege},
+            </if>
+            <if test="address!=null">address=#{address},</if>
+            <if test="graduationDate!=null">graduation_date=#{graduationDate}</if>
+
+
+        </trim>
+        where id=#{id}
+    </update>
+    <delete id="deleteBy">
+        delete from student where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--    查询学员数据，分页查询-->
+    <select id="list" resultType="com.backstageManagement.pojo.Student">
+        select s.*,c.name as clazzName from student as s left join clazz as c on s.clazz_id = c.id
+        <where>
+            <if test="name!=null and name!=''">
+                s.name like concat('%',#{name},'%')
+            </if>
+            <if test="degree!=null">
+                and s.degree = #{degree}
+            </if>
+            <if test="clazzId!=null">
+                and s.clazz_id=#{clazzId}
+            </if>
+            <if test="clazzName!=null and clazzName!=''">
+                and c.name=#{clazzName}
+            </if>
+        </where>
+        order by c.create_time desc
+    </select>
+    <!--    查询学员数据，用于下拉列表-->
+    <select id="getById" resultType="com.backstageManagement.pojo.Student">
+        select student.id,
+               student.name,
+               student.no,
+               student.gender,
+               student.phone,
+               student.degree,
+               student.id_card,
+               student.is_college,
+               student.address,
+               student.graduation_date,
+               student.violation_count,
+               student.violation_score,
+               student.clazz_id,
+               student.create_time,
+               student.update_time
+        from student
+        where id = #{id}
+    </select>
+    <!--    学员学历信息统计-->
+    <!-- 学员学历信息统计 -->
+    <select id="getStudentDegreeData" resultType="java.util.Map">
+        select (case
+                    when degree = 1 then '初中'
+                    when degree = 2 then '高中'
+                    when degree = 3 then '大专'
+                    when degree = 4 then '本科'
+                    when degree = 5 then '硕士'
+                    when degree = 6 then '博士'
+                    else '其他学历'
+            end)        as name,
+               count(*) as value
+        from student
+        group by (case
+                      when degree = 1 then '初中'
+                      when degree = 2 then '高中'
+                      when degree = 3 then '大专'
+                      when degree = 4 then '本科'
+                      when degree = 5 then '硕士'
+                      when degree = 6 then '博士'
+                      else '其他学历'
+            end)
+        order by value;
+    </select>
+    <!--    班级学员数量统计-->
+    <select id="countStudentCountData" resultType="java.util.Map">
+        select (
+                   case
+                       when student.clazz_id = 1 then 'JavaEE就业163期'
+                       when student.clazz_id = 2 then '前端就业90期'
+                       when student.clazz_id = 3 then 'JavaEE就业165期'
+                       when student.clazz_id = 4 then 'JavaEE就业166期'
+                       when student.clazz_id = 5 then '大数据就业58期'
+                       when student.clazz_id = 6 then 'JavaEE就业167期'
+                       else '其他班级'
+                       end
+                   )    as c,
+               count(*) as num
+        from student
+        group by c
+        order by num;
+
+    </select>
+    <!-- 单独更新违纪扣分、违纪次数 -->
+    <!-- 只更新违纪次数+违纪扣分，数据库原子加减，不用查库计算 -->
+    <update id="updateViolationInfo">
+        UPDATE student
+        SET violation_count = violation_count + 1,
+            violation_score = violation_score + #{score}
+        WHERE id = #{id}
+    </update>
+</mapper>
